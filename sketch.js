@@ -1,75 +1,92 @@
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
-const Body = Matter.Body;
 const Constraint = Matter.Constraint;
 
+var engine, world;
+var ball,ground;
+var stand1,stand2;
+var slingShot;
+var rock_img;
 
+function preload(){
+  rock_img=loadImage("rock.png");
+}
 function setup() {
-  createCanvas(1200,600);
- 
 
+  createCanvas(900,400);
   engine = Engine.create();
   world = engine.world;
-
-  Engine.run(engine)
-
-  ground = new Ground(600,580,1200,20);
-
-  ground2 = new Ground(390,300,260,10);
-  ground3 = new Ground(900,400,200,10);
-
-  polygon = new Polygon(150,200,30,30);
-
-  launcher = new Slingshot(polygon.body,{x:150, y:110})
+  Engine.run(engine);
   
-  
-  block1 = new Block(480,275);
-  block2 = new Block(450,275);
-  block3 = new Block(420,275);
-  block4 = new Block(390,275);
-  block5 = new Block(360,275);
-  block6 = new Block(330,275);
-  block7 = new Block(300,275);
-  block8 = new Block(330,235);
-  block9 = new Block(360,235);
-  block10 = new Block(390,235);
-  block11 = new Block(420,235);
-  block12 = new Block(450,235);
-  block13 = new Block(360,195);
-  block14 = new Block(390,195);
-  block15 = new Block(420,195);
-  block16 = new Block(390,155);
+  ground = new Ground();
+  stand1 = new Stand(390,300,250,10);
+  stand2 = new Stand(700,200,200,10);
+ 
+  //level one
+  block1 = new Block(300,275,30,40);
+  block2 = new Block(330,275,30,40);
+  block3 = new Block(360,275,30,40);
+  block4 = new Block(390,275,30,40);
+  block5 = new Block(420,275,30,40);
+  block6 = new Block(450,275,30,40);
+  block7 = new Block(480,275,30,40);
+  //level two
+  block8 = new Block(330,235,30,40);
+  block9 = new Block(360,235,30,40);
+  block10 = new Block(390,235,30,40);
+  block11 = new Block(420,235,30,40);
+  block12 = new Block(450,235,30,40);
+  //level three
+  block13 = new Block(360,195,30,40);
+  block14 = new Block(390,195,30,40);
+  block15 = new Block(420,195,30,40);
+  //top
+  block16 = new Block(390,155,30,40);
 
-  b1 = new Block(900,275);
-  b2 = new Block(900,315);
-  b3 = new Block(870,315);
-  b4 = new Block(930,315);
-  b5 = new Block(900,355);
-  b6 = new Block(870,355);
-  b7 = new Block(840,355);
-  b8 = new Block(930,355);
-  b9 = new Block(960,355);
-  
+  //set 2 for second stand
+  //level one
+  blocks1 = new Block(640,175,30,40);
+  blocks2 = new Block(670,175,30,40);
+  blocks3 = new Block(700,175,30,40);
+  blocks4 = new Block(730,175,30,40);
+  blocks5 = new Block(760,175,30,40);
+  //level two
+  blocks6 = new Block(670,135,30,40);
+  blocks7 = new Block(700,135,30,40);
+  blocks8 = new Block(730,135,30,40);
+  //top
+  blocks9 = new Block(700,95,30,40);
 
+ 
+  ball = Bodies.circle(50,200,20);
+  World.add(world,ball);
+
+  slingShot = new Slingshot(this.ball,{x:100,y:200});
 
 }
 
 function draw() {
-  background("black");
-
-fill("white")
-textSize(20);
-text("Drag the hexagonal stone and release it, to launch it towards the block",100,40);
-
+  background(56,44,44); 
+ 
+  imageMode(CENTER);
+  image(rock_img ,ball.position.x,ball.position.y,40,40);
 
 
+  stroke(0,0,0);
+  fill("white");
+  textSize(20);
+  fill("lightyellow");
+  text("Drag the Hexagonal Stone and Release it, to launch it towards the blocks",100,30);
 
   ground.display();
-  ground2.display();
-  ground3.display();
+  stand1.display();
+  stand2.display();
 
-  fill(rgb(135, 205, 236));
+  strokeWeight(2);
+  stroke(0,0,0);
+  
+  fill("skyblue");
   block1.display();
   block2.display();
   block3.display();
@@ -77,61 +94,46 @@ text("Drag the hexagonal stone and release it, to launch it towards the block",1
   block5.display();
   block6.display();
   block7.display();
-
-  fill("magenta")
+  fill("pink");
   block8.display();
   block9.display();
   block10.display();
   block11.display();
   block12.display();
-
-  fill("pink")
+  fill("turquoise");
   block13.display();
   block14.display();
   block15.display();
-
-  fill("whiteSmoke")
-  block16.display(); 
-
-  fill(rgb(135, 205, 236))
-  b5.display();
-  b8.display();
-  b7.display();
-  b6.display();
-  b9.display();
+  fill("grey");
+  block16.display();
+  fill("skyblue");
+  blocks1.display();
+  blocks2.display();
+  blocks3.display();
+  blocks4.display();
+  blocks5.display();
+  fill("turquoise");
+  blocks6.display();
+  blocks7.display();
+  blocks8.display();
   fill("pink")
-  b4.display();
-  b3.display();
-  b2.display();
-  fill("whiteSmoke")
-  b1.display();
+  blocks9.display();
+  fill("gold");
 
-  polygon.display();
-  launcher.display();
-
-fill("white")
-textSize(20)
-text("press space to get a second chance" ,800,500);
 
   
-  drawSprites();
+  slingShot.display();
+}
+function mouseDragged(){
+  Matter.Body.setPosition(this.ball,{x:mouseX,y:mouseY});
+}
+function mouseReleased(){
+  slingShot.fly();
 }
 
-function mouseDragged()  {
-  Matter.Body.setPosition(polygon.body,{x: mouseX, y: mouseY})
-}
-
-function mouseReleased()  {
-  launcher.fly()
-  
-
-}
-
-function keyPressed()  {
-  if(keyCode===32)  {
-    Matter.Body.setPosition(polygon.body,{x:150, y:200})
-    launcher.attach(polygon.body);
-
+function keyPressed(){
+  if(keyCode === 32)
+  {
+      slingShot.attach(this.ball);
   }
-
 }
